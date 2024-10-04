@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+button {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+input {
+    padding: 5px;
+    font-size: 16px;
+}
+
+.status {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.on {
+    color: white;
+    background-color: green;
+}
+
+.off {
+    color: white;
+    background-color: red;
+}
+
+progress {
+    width: 200px;
+    height: 20px;
+    margin: 10px;
+}
+
+input[type="range"] {
+    width: 200px;
+    margin: 10px;
+}

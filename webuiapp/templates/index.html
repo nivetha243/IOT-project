@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IoT Device Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>IoT Device Control</h1>
+
+    <!-- TV Controls -->
+    <h2>TV Controls</h2>
+    <div>
+        <span>TV Status: <span id="tv-status" class="status off">OFF</span></span>
+    </div>
+    <button onclick="controlTv('on')">Turn On TV</button>
+    <button onclick="controlTv('off')">Turn Off TV</button>
+
+    <!-- Volume Control with Progress Bar -->
+    <div>
+        <label for="volume-bar">Volume:</label>
+        <progress id="volume-bar" max="100" value="10"></progress>
+        <span id="volume-value">10</span>
+    </div>
+    <button onclick="controlTv('volume_up')">Volume Up</button>
+    <button onclick="controlTv('volume_down')">Volume Down</button>
+
+    <!-- AC Controls -->
+    <h2>AC Controls</h2>
+    <div>
+        <span>AC Status: <span id="ac-status" class="status off">OFF</span></span>
+    </div>
+    <!-- Temperature Control with Range Slider -->
+    <div>
+        <label for="temperature-slider">Temperature:</label>
+        <input type="range" id="temperature-slider" min="18" max="30" value="24" disabled>
+        <span id="temperature-value">24°C</span>
+    </div>
+    <button onclick="controlAc('on')">Turn On AC</button>
+    <button onclick="controlAc('off')">Turn Off AC</button>
+    <button onclick="controlAc('temperature_up')">Temperature Up</button>
+    <button onclick="controlAc('temperature_down')">Temperature Down</button>
+
+    <script>
+        function controlTv(command) {
+            $.post('/tv/' + command, function(response) {
+                updateTvState(response);
+            });
+        }
+
+        function controlAc(command) {
+            $.post('/ac/' + command, function(response) {
+                updateAcState(response);
+            });
+        }
+
+        function updateTvState(tvState) {
+            // Update TV status (on/off)
+            $('#tv-status').text(tvState.status.toUpperCase());
+            if (tvState.status === "on") {
+                $('#tv-status').removeClass('off').addClass('on');
+            } else {
+                $('#tv-status').removeClass('on').addClass('off');
+            }
+
+            // Update volume bar and value
+            $('#volume-bar').val(tvState.volume);
+            $('#volume-value').text(tvState.volume);
+        }
+
+        function updateAcState(acState) {
+            // Update AC status (on/off)
+            $('#ac-status').text(acState.status.toUpperCase());
+            if (acState.status === "on") {
+                $('#ac-status').removeClass('off').addClass('on');
+            } else {
+                $('#ac-status').removeClass('on').addClass('off');
+            }
+
+            // Update temperature slider and value
+            $('#temperature-slider').val(acState.temperature);
+            $('#temperature-value').text(acState.temperature + '°C');
+        }
+
+        // Function to periodically fetch the device states
+        function pollDeviceStates() {
+            $.get('/status', function(response) {
+                updateTvState(response.tv);
+                updateAcState(response.ac);
+            });
+        }
+
+
+        // Poll every 2 seconds
+        setInterval(pollDeviceStates, 2000);
+    </script>
+</body>
+</html>
